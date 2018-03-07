@@ -1,2 +1,0 @@
-# Genesis
-# Personal use only

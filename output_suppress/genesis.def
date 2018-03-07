@@ -27,7 +27,8 @@ c
      +          tiny   = 1.d-25,             !check i for precission 
      +          small  = 1.d-7,              !check ii for precission
      +          nrgrid = 1000,               !number of radial points for s. c.
-     +          ncmax  = 503)                !# of gridpoints of cartesian mesh
+     +          ncmax  = 503,                !# of gridpoints of cartesian mesh
+     +          nslcmax= 5000)               ! maximum of slice number
 c
 c     error codes 
 c
