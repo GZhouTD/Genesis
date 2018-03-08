@@ -119,6 +119,8 @@ c
         call outhist(islice)
         call outdump(islice)                   !dump rad + part if needed
         call closeoutputbinmpi()               !close binary files for mpi feature
+c       all the field data (at the end of UND) is stored in gfield 
+        call gswapfield(isilce)
       end do    
 c
 c     merge has to be done first so that the field dump is already

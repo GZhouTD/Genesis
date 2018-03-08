@@ -2,13 +2,15 @@ c     --------------------------------------------------------------------
 c     cartesian mesh
 c   
       complex*16 crfield,crsource,crmatc,
-     +           cstep,crhm,cwet,cbet
+     +           cstep,crhm,cwet,cbet，
+     +           gfield,tfield
       real*8  dxy,xks,radphase,besselcoupling
       integer nhloop,hloop
 c
       common /cartcom/ 
      c        crfield,crsource,crmatc,
      c        cstep,crhm,cwet,cbet,
+     c        gfield,tfield,
      r        dxy,xks,radphase,
      r        besselcoupling,
      i        nhloop,hloop
@@ -18,5 +20,7 @@ c
      c        crsource(ncmax*ncmax),crhm(ncmax*ncmax),
      c        cwet(ncmax*nhmax),cbet(ncmax*nhmax),
      c        cstep(nhmax),
+     c        gfield(nslcmax*ncmax*ncmax*nhmax),
+     c        tfield(nslcmax*ncmax*ncmax*nhmax),
      r        besselcoupling(nhmax),
      i        hloop(nhmax)

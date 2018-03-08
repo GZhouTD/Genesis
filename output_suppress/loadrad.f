@@ -243,3 +243,33 @@ c
       call pushtimerec(crwork3,ncar,islp)
       return
       end ! swapfield
+
+c     This function is added by G.Zhou to gather the field
+      subroutine gswapfield(islice)
+c     ========================================
+c     swap current field with then time-record
+c     ----------------------------------------
+c
+      include 'genesis.def'
+      include 'mpi.cmn'
+      include 'input.cmn'
+      include 'field.cmn'
+      include 'work.cmn'
+c
+      integer it,mpi_top,mpi_bot,islice
+      integer memsize,gslice,ioff
+      integer status(MPI_STATUS_SIZE)
+c
+      if (mpi_id.gt.0) return
+      if (islice-1+mpi_loop.le.nslice) then
+        gslice=mpi_loop
+      else
+        gslice=nslice-islice+1
+      endif
+      MPI_Gather(crfiled, memsize, MPI_DOUBLE_COMPLEX, tfield, memsize, MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD);
+      ioff=(islice-1)*memsize
+      do it=1,memsize*gslice
+        gfield(it+ioff)=tfield(it)
+      enddo
+      return
+      end ! swapfield
