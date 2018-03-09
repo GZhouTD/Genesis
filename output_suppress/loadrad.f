@@ -266,7 +266,8 @@ c
       else
         gslice=nslice-islice+1
       endif
-      MPI_Gather(crfiled, memsize, MPI_DOUBLE_COMPLEX, tfield, memsize, MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD);
+      call MPI_Gather(crfield, memsize, MPI_DOUBLE_COMPLEX,
+     c        tfield, memsize, MPI_DOUBLE_COMPLEX, 0, MPI_COMM_WORLD);
       ioff=(islice-1)*memsize
       do it=1,memsize*gslice
         gfield(it+ioff)=tfield(it)
