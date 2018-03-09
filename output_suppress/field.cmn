@@ -5,13 +5,14 @@ c
      +           cstep,crhm,cwet,cbet,
      +           gfield,tfield
       real*8  dxy,xks,radphase,besselcoupling
+      real*8  radp
       integer nhloop,hloop
 c
       common /cartcom/ 
      c        crfield,crsource,crmatc,
      c        cstep,crhm,cwet,cbet,
      c        gfield,tfield,
-     r        dxy,xks,radphase,
+     r        dxy,xks,radphase,radp,
      r        besselcoupling,
      i        nhloop,hloop
 c
@@ -22,5 +23,5 @@ c
      c        cstep(nhmax),
      c        gfield(nslcmax*ncmax*ncmax),
      c        tfield(npromax*ncmax*ncmax),
-     r        besselcoupling(nhmax),
+     r        besselcoupling(nhmax),radp(nslcmax),
      i        hloop(nhmax)

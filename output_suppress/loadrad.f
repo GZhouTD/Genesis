@@ -260,6 +260,7 @@ c
       integer memsize,gslice,ioff
       integer status(MPI_STATUS_SIZE)
 c
+      memsize=ncar*ncar
       if (mpi_id.gt.0) return
       if (islice-1+mpi_loop.le.nslice) then
         gslice=mpi_loop
@@ -274,3 +275,42 @@ c
       enddo
       return
       end ! swapfield
+      subroutine goutput(filename)
+c     ==================================================================
+c     some diagnostics:
+c     the radiation power must be calculated for each integration step
+c     otherwise error will be wrong.
+c     all calculation are stored in a history arrays which will be
+c     written to a file ad the end of the run.
+c     ------------------------------------------------------------------
+c
+      include  'genesis.def'
+      include  'sim.cmn'
+      include  'input.cmn'
+      include  'field.cmn'
+      include  'particle.cmn'
+      include  'diagnostic.cmn'
+      include  'work.cmn'
+      include  'magnet.cmn'    ! unofficial
+c
+      integer i,ip,ix,iy,i0,i1,nn(2),istepz,nctmp,n
+      integer ioff,memsize
+      real*8 xavg,yavg,tpsin,tpcos,prad,ptot,gainavg,
+     +       xxsum,yysum,cr2,crsum,wwcr,pradn 
+      complex*16 ctmp 
+
+      do n=1, nslice   ! looping over harmonics
+        crsum=0.0d0
+        ctmp=dcmplx(0.,0.)
+        ioff=(n-1)*ncar*ncar
+        do i=1+ioff,ncar*ncar+ioff
+          wwcr=dble(crfield(i)*conjg(crfield(i))) !=sum of |aij|^2 
+          crsum=crsum+wwcr
+          ctmp=ctmp+crfield(i)
+        end do
+        pradn=crsum*(dxy*eev*xkper0/xks/hloop(n))**2/vacimp  != current radiation power
+        pgainhist(n)=pradn
+      end
+      open(nout,file=filename, status='unknown')
+      write(nout,30) (radp(n),n=1,nslice)
+ 30   format((50(1pe14.4)))
