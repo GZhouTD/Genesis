@@ -20,7 +20,7 @@ c
      c        crsource(ncmax*ncmax),crhm(ncmax*ncmax),
      c        cwet(ncmax*nhmax),cbet(ncmax*nhmax),
      c        cstep(nhmax),
-     c        gfield(nslcmax*ncmax*ncmax*nhmax),
-     c        tfield(npromax*ncmax*ncmax*nhmax),
+     c        gfield(nslcmax*ncmax*ncmax),
+     c        tfield(npromax*ncmax*ncmax),
      r        besselcoupling(nhmax),
      i        hloop(nhmax)
