@@ -13,7 +13,7 @@ SOURCE=  main.f check.f diagno.f esource.f field.f incoherent.f \
 #OBJECTS =$(SOURCE:.f=.o)
 #
 COMPILER = gfortran
-#COMPILER = mpif77
+COMPILER = mpif77
 #
 #  executable name
 #

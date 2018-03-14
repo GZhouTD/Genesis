@@ -58,7 +58,7 @@ c
       include 'work.cmn'
       include 'magnet.cmn'
 c
-      integer islp,isep,lstepz,istepz,islice
+      integer islp,isep,lstepz,istepz,islice,a(4)
 c
       call MPI_INIT(mpi_err)
       call MPI_COMM_RANK(MPI_COMM_WORLD, mpi_id,mpi_err)
@@ -115,10 +115,16 @@ c
                  call swapfield(islp)      !advance field in time dep. simulation
            endif
 c
-        end do             
+        end do
+        call gswapfield(islice)
+c        call MPI_Barrier(MPI_COMM_WORLD,mpi_err) 
+c        write(*,*) mpi_id
         call outhist(islice)
         call outdump(islice)                   !dump rad + part if needed
         call closeoutputbinmpi()               !close binary files for mpi feature
+c       all the field data (at the end of UND) is stored in gfield 
+c        call gswapfield(islice)
+c        call MPI_Barrier(MPI_COMM_WORLD)
       end do    
 c
 c     merge has to be done first so that the field dump is already
@@ -126,6 +132,7 @@ c     created and the records from the slippage field
 c     are written at the right position
 c
 c
+      call goutput("heheda")
       call mpi_merge               ! merge single outputfiles into one
 c
       call outdumpslippage         !write slippage field, which escaped the e-bunch

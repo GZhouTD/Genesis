@@ -243,3 +243,85 @@ c
       call pushtimerec(crwork3,ncar,islp)
       return
       end ! swapfield
+
+c     This function is added by G.Zhou to gather the field
+      subroutine gswapfield(islice)
+c     ========================================
+c     swap current field with then time-record
+c     ----------------------------------------
+c
+      include 'genesis.def'
+      include 'mpi.cmn'
+      include 'input.cmn'
+      include 'field.cmn'
+      include 'work.cmn'
+c      include 'mpif.h'
+c
+      integer it,mpi_top,mpi_bot,islice
+      integer memsize,gslice,ioff
+      integer status(MPI_STATUS_SIZE)
+c
+      memsize=ncar*ncar
+      if (islice-1+mpi_loop.le.nslice) then
+        gslice=mpi_loop
+      else
+        gslice=nslice-islice+1+mpi_id
+      endif
+c      write(*,*) '+++++++++++++++++++',mpi_id
+      write(*,*) "+++++++root is gathering++++++"
+      call  MPI_ALLGather(crfield,memsize,MPI_DOUBLE_COMPLEX,tfield,
+     c         memsize,MPI_DOUBLE_COMPLEX, MPI_COMM_WORLD,mpi_err)
+      call MPI_Barrier(MPI_COMM_WORLD,mpi_err)
+      write(*,*) "processors sync'ed"
+c      if (mpi_id.gt.0) return
+      ioff=(islice-1-mpi_id)*memsize
+c      write(*,*) gslice
+      do it=1,memsize*gslice
+        gfield(it+ioff)=tfield(it)
+      enddo
+      return
+      end ! swapfield
+c   
+      subroutine goutput(filename)
+c     ==================================================================
+c     some diagnostics:
+c     the radiation power must be calculated for each integration step
+c     otherwise error will be wrong.
+c     all calculation are stored in a history arrays which will be
+c     written to a file ad the end of the run.
+c     ------------------------------------------------------------------
+c
+      include  'genesis.def'
+      include  'mpi.cmn'
+      include  'sim.cmn'
+      include  'input.cmn'
+      include  'field.cmn'
+      include  'particle.cmn'
+      include  'diagnostic.cmn'
+      include  'work.cmn'
+      include  'magnet.cmn'    ! unofficial
+c
+      integer i,ip,ix,iy,i0,i1,nn(2),istepz,nctmp,n
+      integer ioff,memsize,nout
+      real*8 xavg,yavg,tpsin,tpcos,prad,ptot,gainavg,
+     +       xxsum,yysum,cr2,crsum,wwcr,pradn,radp(5000)
+      complex*16 ctmp 
+      character*6 filename
+c      if (mpi_id.ne.3) return
+      do n=1, nslice   ! looping over harmonics
+        crsum=0.0d0
+        ioff=(n-1)*ncar*ncar
+        do i=1+ioff,ncar*ncar+ioff
+          wwcr=dble(gfield(i)*conjg(gfield(i))) !=sum of |aij|^2 
+          crsum=crsum+wwcr
+        end do
+        pradn=crsum*(dxy*eev*xkper0/xks/1.0)**2/vacimp 
+        radp(n)=pradn
+c        write(*,*) pradn
+      enddo
+      open(nout,file=filename, status='unknown')
+      write(*,30) (radp(n),n=1,nslice)
+      write(nout,30) (radp(n),n=1,nslice)
+30    format((50(1pe14.4)))
+      return
+      end

@@ -4,8 +4,8 @@ c
       character*4 platf
 c		 
       real*8 eev,vacimp,ce,pi,pihalf,twopi,tiny,small
-      integer npmax,nzmax,ncmax,nsmax,nrgrid,nhmax,ndmax
-      integer original,f_sdds,keepdist
+      integer npmax,nzmax,ncmax,nsmax,nrgrid,nhmax,ndmax,nslcmax
+      integer original,f_sdds,keepdist,npromax
 c
       parameter(
      +          genver = 1.0,                !genesis version
@@ -27,7 +27,9 @@ c
      +          tiny   = 1.d-25,             !check i for precission 
      +          small  = 1.d-7,              !check ii for precission
      +          nrgrid = 1000,               !number of radial points for s. c.
-     +          ncmax  = 503)                !# of gridpoints of cartesian mesh
+     +          ncmax  = 151,                !# of gridpoints of cartesian mesh
+     +          nslcmax= 4000,               ! maximum of slice number
+     +          npromax=160)                 ! maximum of processor
 c
 c     error codes 
 c
