@@ -71,6 +71,7 @@ c
 c
       call initrun    !initialize simulation 
       call outglob    !output of global parameter (t-independent)
+      call ishifter(pos,tshift) ! init field
 c
 c     temporary file for debugging
 c

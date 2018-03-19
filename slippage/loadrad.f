@@ -192,7 +192,7 @@ c
       end
 c 
 c
-      subroutine swapfield(islp)
+      subroutine swapfield(islp,islice)
 c     ========================================
 c     swap current field with then time-record
 c     ----------------------------------------
@@ -204,7 +204,7 @@ c
       include 'work.cmn'
 c
       integer islp,it,mpi_top,mpi_bot
-      integer memsize
+      integer memsize,islice,marker,ioff
       integer status(MPI_STATUS_SIZE)
 c
       memsize=ncar*ncar*nhloop
@@ -233,14 +233,30 @@ c
         endif    
       endif
       
-      if (mpi_id.gt.0) return
-
-      do it=1,memsize
+      if (mpi_id.eq.0) then
+        do it=1,memsize
           crwork3(it)=crfield(it)
-      enddo
+        enddo
 
-      call pulltimerec(crfield,ncar,islp)
-      call pushtimerec(crwork3,ncar,islp)
+        call pulltimerec(crfield,ncar,islp)
+        call pushtimerec(crwork3,ncar,islp)
+      endif
+c     GZHou modified here for  phase shifter
+      if (islp.eq.npos) then
+        memsize=ncar*ncar
+        call gswapfield(islice)
+        marker=islice-gslp
+        ioff=(marker-1)*memsize
+        do it=1,memsize
+          if (marker.lt.1) then
+              crfield(it)=dcmplx(0.,0.)
+          else
+              crfield(it)=gfield(it+ioff)
+          endif
+        enddo
+        call addphi(gphi)
+      endif
+
       return
       end ! swapfield
 
@@ -356,61 +372,20 @@ c
       gphi=(tshift-gslp*zsep)*2*pi
 
       return
-      end ! swapfield
+      end
 
 
-      subroutine extractfield(shift,islice,islp,pos)
-c     ========================================
-c     swap current field with then time-record
-c     ----------------------------------------
+      subroutine addphi(gphi)
+c     ==================================================================
+c     add a small phase
+c     ------------------------------------------------------------------
 c
       include 'genesis.def'
-      include 'mpi.cmn'
       include 'input.cmn'
-      include 'field.cmn'
-      include 'work.cmn'
-      include 'time.cmn'
-c
-      integer islp,it,mpi_top,mpi_bot
-      integer memsize,islice,shift
-      integer status(MPI_STATUS_SIZE)
-      real*8  tmp
-c
+      include 'particle.cmn'
+      include 'work.cmn' 
       
-      memsize=ncar*ncar*nhloop
-
-      if (mpi_loop.gt.1) then
-c
-        do it=1,memsize
-          crwork3(it)=crfield(it)
-        enddo
-c
-        mpi_top=mpi_id+1
-        if (mpi_top.ge.mpi_loop) mpi_top=0
-        mpi_bot=mpi_id-1
-        if (mpi_bot.lt.0) mpi_bot=mpi_loop-1      
-c
-        if (mod(mpi_id,2).eq.0) then
-         call MPI_SEND(crwork3,memsize,MPI_DOUBLE_COMPLEX,mpi_top,
-     c       mpi_id,MPI_COMM_WORLD,mpi_err)
-         call MPI_RECV(crfield,memsize,MPI_DOUBLE_COMPLEX,mpi_bot,
-     c       mpi_bot,MPI_COMM_WORLD,status,mpi_err)        
-        else
-         call MPI_RECV(crfield,memsize,MPI_DOUBLE_COMPLEX,mpi_bot,
-     c       mpi_bot,MPI_COMM_WORLD,status,mpi_err)        
-         call MPI_SEND(crwork3,memsize,MPI_DOUBLE_COMPLEX,mpi_top,
-     c       mpi_id,MPI_COMM_WORLD,mpi_err)    
-        endif    
-      endif
-      
-      if (mpi_id.gt.0) return
-
-      do it=1,memsize
-          crwork3(it)=crfield(it)
-      enddo
-
-      call pulltimerec(crfield,ncar,islp)
-      call pushtimerec(crwork3,ncar,islp)
-      return
-      end ! swapfield
+      do n=1,npart
+	  theta(n)=theta(n)+gphi
+      end do   
 
