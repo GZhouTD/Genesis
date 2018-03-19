@@ -325,3 +325,92 @@ c        write(*,*) pradn
 30    format((50(1pe14.4)))
       return
       end
+
+
+      subroutine ishifter(pos,tshift)
+c     ========================================
+c     swap current field with then time-record
+c     ----------------------------------------
+c
+      include 'genesis.def'
+      include 'mpi.cmn'
+      include 'input.cmn'
+      include 'field.cmn'
+      include 'work.cmn'
+      include 'time.cmn'
+c
+      integer islp,it,mpi_top,mpi_bot
+      integer memsize,islice,shift
+      integer status(MPI_STATUS_SIZE)
+      real*8  mintmp,tshift,pos,tmp
+c
+      mintmp=100000
+      do islp=1,nslp
+        tmp=abs(islp/nlsp-pos/zstop)
+        if (tmp.lt.mintmp) then
+          mintmp=tmp
+          npos=islp
+        endif
+      enddo
+      gslp=Floor(tshift/zsep)
+      gphi=(tshift-gslp*zsep)*2*pi
+
+      return
+      end ! swapfield
+
+
+      subroutine extractfield(shift,islice,islp,pos)
+c     ========================================
+c     swap current field with then time-record
+c     ----------------------------------------
+c
+      include 'genesis.def'
+      include 'mpi.cmn'
+      include 'input.cmn'
+      include 'field.cmn'
+      include 'work.cmn'
+      include 'time.cmn'
+c
+      integer islp,it,mpi_top,mpi_bot
+      integer memsize,islice,shift
+      integer status(MPI_STATUS_SIZE)
+      real*8  tmp
+c
+      
+      memsize=ncar*ncar*nhloop
+
+      if (mpi_loop.gt.1) then
+c
+        do it=1,memsize
+          crwork3(it)=crfield(it)
+        enddo
+c
+        mpi_top=mpi_id+1
+        if (mpi_top.ge.mpi_loop) mpi_top=0
+        mpi_bot=mpi_id-1
+        if (mpi_bot.lt.0) mpi_bot=mpi_loop-1      
+c
+        if (mod(mpi_id,2).eq.0) then
+         call MPI_SEND(crwork3,memsize,MPI_DOUBLE_COMPLEX,mpi_top,
+     c       mpi_id,MPI_COMM_WORLD,mpi_err)
+         call MPI_RECV(crfield,memsize,MPI_DOUBLE_COMPLEX,mpi_bot,
+     c       mpi_bot,MPI_COMM_WORLD,status,mpi_err)        
+        else
+         call MPI_RECV(crfield,memsize,MPI_DOUBLE_COMPLEX,mpi_bot,
+     c       mpi_bot,MPI_COMM_WORLD,status,mpi_err)        
+         call MPI_SEND(crwork3,memsize,MPI_DOUBLE_COMPLEX,mpi_top,
+     c       mpi_id,MPI_COMM_WORLD,mpi_err)    
+        endif    
+      endif
+      
+      if (mpi_id.gt.0) return
+
+      do it=1,memsize
+          crwork3(it)=crfield(it)
+      enddo
+
+      call pulltimerec(crfield,ncar,islp)
+      call pushtimerec(crwork3,ncar,islp)
+      return
+      end ! swapfield
+

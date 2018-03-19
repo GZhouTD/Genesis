@@ -58,7 +58,10 @@ c
       include 'work.cmn'
       include 'magnet.cmn'
 c
-      integer islp,isep,lstepz,istepz,islice,a(4)
+      integer islp,isep,lstepz,istepz,islice
+      real*8 pos
+      pos=50.0
+      tshift=10
 c
       call MPI_INIT(mpi_err)
       call MPI_COMM_RANK(MPI_COMM_WORLD, mpi_id,mpi_err)
@@ -116,7 +119,7 @@ c
            endif
 c
         end do
-        call gswapfield(islice)
+        
 c        call MPI_Barrier(MPI_COMM_WORLD,mpi_err) 
 c        write(*,*) mpi_id
         call outhist(islice)

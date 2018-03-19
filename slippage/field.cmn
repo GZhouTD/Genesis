@@ -4,7 +4,8 @@ c
       complex*16 crfield,crsource,crmatc,
      +           cstep,crhm,cwet,cbet,
      +           gfield,tfield
-      real*8  dxy,xks,radphase,besselcoupling
+      real*8  dxy,xks,radphase,besselcoupling,
+     +        npos,gslp,gphi 
       integer nhloop,hloop
 c
       common /cartcom/ 
@@ -13,6 +14,7 @@ c
      c        gfield,tfield,
      r        dxy,xks,radphase,
      r        besselcoupling,
+     r        npos,gslp,gphi
      i        nhloop,hloop
 c
       dimension
