@@ -1,6 +1,6 @@
   $NEWRUN
   VERSION= 1.0,
-  NPART= 1024,
+  NPART= 8192,
   NBINS= 8,
   XLAMD=  0.03,
   IPHSTY=1,
@@ -9,7 +9,7 @@
   XKX= 0.0,
   XKY= 1.0,
   CURPEAK=  3500.,
-  CURLEN= 8.0E-6,
+  CURLEN= -8.0E-6,
   PRAD0=  0.0,
   GAMMA0=  19695.2,
   DELGAM=  2.54404,
@@ -24,16 +24,16 @@
   ZWAIST=  12.0,
   NHARM= 1,
   IDMPPAR= 0,
-  IDMPFLD= 0,
+  IDMPFLD= 1,
   OUTPUTFILE= 'mod.out' ,
   IWITYP= 0,
   NWIG= 110,
-  ZSTOP= 5,
+  ZSTOP=  50,
   NCAR= 151,
   ISRSIG= 1,
   ISRAVG= 1,
   DELZ= 1.0,
-  ZSEP= 1.0,
+  ZSEP= 2.0,
   NSEC= 17,
   rxbeam=  2.318139E-05
   rybeam=  1.898513E-05
@@ -52,25 +52,8 @@
   ITDP= 1,
   SHOTNOISE= 1 ,
   NTAIL= 0,
-  NSLICE= 12,
+  NSLICE= 1152,
   IOTAIL= 1,
   IALL = 0,
-  maginfile ='lcls2miss.lat'
   filetype ='ORIGINAL'
   $end
-  DGRID=2000.E-6,
-  RXBEAM=  22.3548E-6,
-  RYBEAM=  19.9597E-6,
-  ALPHAX=  0.0,
-  ALPHAY=  0.0,
-  wcoefz=  1.500000D+01   0.8D-2   2.000000D+00
-  beamfile  ='wake_40pC_try_AL.beam'
-  rxbeam=  2.243248E-05
-  rybeam=  1.987390E-05
-  alphax=  1.082333E+00
-  alphay= -8.583348E-01
-  distfile  ='150pC1252362k8k.dat'
-  rxbeam=  2.243248E-05
-  rybeam=  1.984801E-05
-  alphax=  1.082333E+00
-  alphay= -8.552458E-01

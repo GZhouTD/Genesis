@@ -5,8 +5,8 @@ c
      +           cstep,crhm,cwet,cbet,
      +           gfield,tfield
       real*8  dxy,xks,radphase,besselcoupling,
-     +        npos,gslp,gphi 
-      integer nhloop,hloop
+     +        gphi 
+      integer nhloop,hloop,npos,gslp
 c
       common /cartcom/ 
      c        crfield,crsource,crmatc,
@@ -14,8 +14,9 @@ c
      c        gfield,tfield,
      r        dxy,xks,radphase,
      r        besselcoupling,
-     r        npos,gslp,gphi
-     i        nhloop,hloop
+     r        gphi,
+     i        nhloop,hloop,
+     i        npos,gslp
 c
       dimension
      c        crfield(ncmax*ncmax*nhmax),crmatc(ncmax*nhmax),

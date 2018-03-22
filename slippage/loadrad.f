@@ -202,6 +202,7 @@ c
       include 'input.cmn'
       include 'field.cmn'
       include 'work.cmn'
+      include 'time.cmn'
 c
       integer islp,it,mpi_top,mpi_bot
       integer memsize,islice,marker,ioff
@@ -237,12 +238,16 @@ c
         do it=1,memsize
           crwork3(it)=crfield(it)
         enddo
-
+        write(*,*) '++++++++++++++++++'
+        write(*,*) npos
+        write(*,*) nslp
+        write(*,*) '++++++++++++++++++'
         call pulltimerec(crfield,ncar,islp)
         call pushtimerec(crwork3,ncar,islp)
       endif
 c     GZHou modified here for  phase shifter
       if (islp.eq.npos) then
+        write(*,*) 'heheheheheheheheheheheheheheheheheh'
         memsize=ncar*ncar
         call gswapfield(islice)
         marker=islice-gslp
@@ -254,7 +259,7 @@ c     GZHou modified here for  phase shifter
               crfield(it)=gfield(it+ioff)
           endif
         enddo
-        call addphi(gphi)
+        call addphi
       endif
 
       return
@@ -359,15 +364,30 @@ c
       integer memsize,islice,shift
       integer status(MPI_STATUS_SIZE)
       real*8  mintmp,tshift,pos,tmp
+      real*8  tislp,tnslp,hdt1,hdt2
 c
       mintmp=100000
+      npos=100000
       do islp=1,nslp
-        tmp=abs(islp/nlsp-pos/zstop)
+        tislp=islp
+        tnslp=nslp
+        hdt1=tislp/tnslp
+        hdt2=pos/zstop 
+        if (mpi_id.eq.0) then
+          write(*,*) tislp
+          write(*,*) nslp
+          write(*,*) pos
+          write(*,*) zstop
+        endif
+        tmp=abs(hdt1-hdt2)
         if (tmp.lt.mintmp) then
           mintmp=tmp
           npos=islp
         endif
       enddo
+c      if (pos.eq.0) then
+c        npos=0
+c      endif
       gslp=Floor(tshift/zsep)
       gphi=(tshift-gslp*zsep)*2*pi
 
@@ -375,17 +395,25 @@ c
       end
 
 
-      subroutine addphi(gphi)
+      subroutine addphi
 c     ==================================================================
 c     add a small phase
 c     ------------------------------------------------------------------
 c
       include 'genesis.def'
       include 'input.cmn'
-      include 'particle.cmn'
-      include 'work.cmn' 
-      
+      include 'particle.cmn' 
+      include 'field.cmn'
+c
+      integer n
+      write(*,*) 'gphihdoashdoisdhasdihjsakldjhlaksdjlkasjdkl'
+      write(*,*) gphi 
       do n=1,npart
+          write(*,*) theta(n)
 	  theta(n)=theta(n)+gphi
-      end do   
+          write(*,*) theta(n)
+      enddo 
+
+      return
+      end  
 
