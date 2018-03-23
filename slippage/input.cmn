@@ -4,6 +4,7 @@ c     all input variables
 c
 c     wiggler        
       real*8    aw0,xkx,xky,wcoefz,xlamd,fbess0,delaw,awd,awx,awy
+      real*8    pos,tshift
       integer   iseed,nwig,nsec,iertyp,iwityp
 c     electron beam
       real*8    gamma0,delgam,rxbeam,rybeam,alphax,alphay,emitx
@@ -60,6 +61,7 @@ c     transfermatrix
      r quadf,quadd,fl,dl,drl,f1st,qfdx,qfdy,sl,solen,
      r curlen,shotnoise,svar,dgrid,eloss,version,
      r ibfield,imagl,idril,igamref,pradh0,
+     r pos,tshift,
      r itram11,itram12,itram13,
      r itram14,itram15,itram16,itram21,itram22,itram23,
      r itram24,itram25,itram26,itram31,itram32,itram33,

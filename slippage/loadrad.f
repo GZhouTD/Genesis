@@ -259,6 +259,7 @@ c     GZHou modified here for  phase shifter
               crfield(it)=gfield(it+ioff)
           endif
         enddo
+        call phaserot
         call addphi
       endif
 
@@ -348,7 +349,7 @@ c        write(*,*) pradn
       end
 
 
-      subroutine ishifter(pos,tshift)
+      subroutine ishifter
 c     ========================================
 c     swap current field with then time-record
 c     ----------------------------------------
@@ -363,7 +364,7 @@ c
       integer islp,it,mpi_top,mpi_bot
       integer memsize,islice,shift
       integer status(MPI_STATUS_SIZE)
-      real*8  mintmp,tshift,pos,tmp
+      real*8  mintmp,tmp
       real*8  tislp,tnslp,hdt1,hdt2
 c
       mintmp=100000
@@ -409,9 +410,9 @@ c
       write(*,*) 'gphihdoashdoisdhasdihjsakldjhlaksdjlkasjdkl'
       write(*,*) gphi 
       do n=1,npart
-          write(*,*) theta(n)
+c          write(*,*) theta(n)
 	  theta(n)=theta(n)+gphi
-          write(*,*) theta(n)
+c          write(*,*) theta(n)
       enddo 
 
       return
@@ -433,9 +434,10 @@ c
       real*8 gamma_old,theta_old,ggamma,gnpart  
       integer i,ierr
 c
+      itram56=2*tshift*xlamds
       ggamma=0.0
       gnpart=0.0
-      
+
       do i=1,npart 
 c  exclude lost particles
          if (gamma(i).lt.0) then

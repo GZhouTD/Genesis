@@ -59,9 +59,7 @@ c
       include 'magnet.cmn'
 c
       integer islp,isep,lstepz,istepz,islice
-      real*8 pos,tshift
-      pos=10
-      tshift=1.0 
+c      real*8 pos,tshift
 c
       call MPI_INIT(mpi_err)
       call MPI_COMM_RANK(MPI_COMM_WORLD, mpi_id,mpi_err)
