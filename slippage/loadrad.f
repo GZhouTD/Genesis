@@ -434,19 +434,20 @@ c
       real*8 gamma_old,theta_old,ggamma,gnpart  
       integer i,ierr
 c
+      
       itram56=2*tshift*xlamds
       ggamma=0.0
       gnpart=0.0
 
       do i=1,npart 
 c  exclude lost particles
-         if (gamma(i).lt.0) then
+         if (gamma(i).ge.0) then
            ggamma=ggamma+gamma(i)
            gnpart=gnpart+1.0
          endif
       enddo
       igamref= ggamma/gnpart 
-
+      write(*,*) itram56,itram11,igamref,gnpart
       do i=1,npart 
 c  Denormalize      
          px(i)=px(i)/gamma(i)

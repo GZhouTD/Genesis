@@ -191,7 +191,7 @@ c
 c
 c     wiggler        
      +          aw0,xkx,xky,wcoefz,xlamd,fbess0,delaw,iertyp,iwityp,
-     +          awd,iseed,awx,awy,
+     +          awd,iseed,awx,awy,tshift,pos,
 c     electron beam
      +          npart,gamma0,delgam,rxbeam,rybeam,alphax,alphay,
      +          emitx,emity,xbeam,ybeam,pxbeam,pybeam,cuttail,curpeak,
@@ -1281,6 +1281,8 @@ c
       xlamd  = 2.05d-2        !wiggler period  (m)
       awx    = 0.			  ! max offset in x for undulator misalignment
       awy    = 0.			  ! max offset in y for undulator misalignment
+      tshift =0.
+      pos    =0.
 c
 c     electron beam parameters:
 c

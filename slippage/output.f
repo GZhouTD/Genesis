@@ -481,7 +481,39 @@ c
       call outhistheader(islice)
 c 
 c
-      write(nout,30) pgainhist(1,ihist)
+      do ih=1,ihist
+        n=0      
+        do il=1,kout 
+            if (iout(il).eq.1)  vout(il)=pgainhist(1,ih)
+            if (iout(il).eq.2)  vout(il)=logp(ih)
+            if (iout(il).eq.3)  vout(il)=pmidhist(1,ih)
+            if (iout(il).eq.4)  vout(il)=phimid(1,ih)
+            if (iout(il).eq.5)  vout(il)=whalf(ih)
+            if (iout(il).eq.6)  vout(il)=diver(ih)
+            if (iout(il).eq.7)  vout(il)=gamhist(ih)
+            if (iout(il).eq.8)  vout(il)=pmodhist(1,ih)
+            if (iout(il).eq.9)  vout(il)=xrms(ih)
+            if (iout(il).eq.10) vout(il)=yrms(ih)
+            if (iout(il).eq.11) vout(il)=error(ih)
+            if (iout(il).eq.12) vout(il)=xpos(ih)
+            if (iout(il).eq.13) vout(il)=ypos(ih)
+            if (iout(il).eq.14) vout(il)=dgamhist(ih)
+            if (iout(il).eq.15) vout(il)=ffield(1,ih)
+c     output of harmonic content 16 -> 2nd harmonc, 17-> 3rd harm etc.
+c     one entry in lout indicates to print four output parameters:
+c     
+            do ill=2,nhmax
+               if (iout(il).eq.(14+ill)) then
+	         vout(il+n)  =pmodhist(ill,ih) 
+ 	         vout(il+n+1)=pgainhist(ill,ih) 
+	         vout(il+n+2)=bunphase(ill,ih)
+	         vout(il+n+3)=pmidhist(ill,ih)
+	         n=n+3
+               endif
+            enddo
+        enddo
+        write(nout,30) (vout(il),il=1,kout)
+      enddo
 c
 c     format statements
 c
