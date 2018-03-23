@@ -417,3 +417,82 @@ c
       return
       end  
 
+      subroutine phaserot 
+c     ================================================================= 
+c     Transfer matrix calculation supplied by A. Meseck. 
+c     ------------------------------------------------------------------
+c
+      include 'genesis.def'
+      include 'io.cmn'
+      include 'input.cmn'
+      include 'field.cmn'
+      include 'sim.cmn'
+      include 'particle.cmn'
+c
+      real*8 ypart_old,py_old,xpart_old,px_old
+      real*8 gamma_old,theta_old,ggamma,gnpart  
+      integer i,ierr
+c
+      ggamma=0.0
+      gnpart=0.0
+      
+      do i=1,npart 
+c  exclude lost particles
+         if (gamma(i).lt.0) then
+           ggamma=ggamma+gamma(i)
+           gnpart=gnpart+1.0
+         endif
+      enddo
+      igamref= ggamma/gnpart 
+
+      do i=1,npart 
+c  Denormalize      
+         px(i)=px(i)/gamma(i)
+         py(i)=py(i)/gamma(i)
+cc
+         xpart_old=xpart(i)
+         ypart_old=ypart(i)
+         px_old= px(i)
+         py_old= py(i)
+         theta_old=theta(i)
+         gamma_old= gamma(i)
+
+            xpart(i)=itram11*xpart_old+itram12*px_old+
+     +      itram13*ypart_old+itram14*py_old+
+     +      itram15*theta(i)*xlamds*convharm/twopi+
+     +      itram16*(gamma(i)-igamref)/igamref
+
+           px(i)=itram21*xpart_old+itram22*px_old+
+     +      itram23*ypart_old+itram24*py_old+
+     +      itram25*theta_old*xlamds*convharm/twopi+
+     +      itram26*(gamma(i)-igamref)/igamref
+
+         
+           ypart(i)=itram31*xpart_old+itram32*px_old+
+     +      itram33*ypart_old+itram34*py_old+
+     +      itram35*theta_old*xlamds*convharm/twopi+
+     +      itram36*(gamma(i)-igamref)/igamref
+
+           py(i)=itram41*xpart_old+itram42*px_old+
+     +      itram43*ypart_old+itram44*py_old+
+     +      itram45*theta_old*xlamds*convharm/twopi+
+     +      itram46*(gamma(i)-igamref)/igamref
+
+          theta(i)=itram55*theta_old+ (itram56*
+     +    ((gamma(i)-igamref)/igamref)*twopi/xlamds/convharm)+
+     +    (itram51*xpart_old+itram52*px_old+itram53*ypart_old+
+     +     itram54*py_old)*twopi/xlamds/convharm
+
+         gamma(i)=(itram61*xpart_old+itram62*px_old+
+     +      itram63*ypart_old+itram64*py_old+
+     +      itram65*theta_old*xlamds*convharm/twopi)*
+     +      igamref + itram66*(gamma(i)-igamref)+igamref
+
+c normalization
+           px(i)=px(i)*gamma(i)
+           py(i)=py(i)*gamma(i)
+cc
+      enddo    
+                                                                 
+      return
+      end !of import transfermatrix

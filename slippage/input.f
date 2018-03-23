@@ -708,6 +708,8 @@ c
       real*8 gamma_old,theta_old    
       integer i,ierr
 c
+c     no initial rotation
+      return
       if (trama.eq.0.d0) return
       if (igamref.le.0) igamref=gamma0 
 
